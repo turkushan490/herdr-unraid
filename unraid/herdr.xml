@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>herdr</Name>
+  <Repository>ghcr.io/turkushan490/herdr-unraid:latest</Repository>
+  <Registry>https://github.com/turkushan490/herdr-unraid/pkgs/container/herdr-unraid</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/turkushan490/herdr-unraid</Support>
+  <Project>https://herdr.dev/</Project>
+  <Overview>Herdr / herdr-core coding-agent runtime with SSH access for the Herdr app and TUI, the Ovis web UI and an optional ttyd browser shell. Everything persists in appdata.</Overview>
+  <Category>Tools: Productivity:</Category>
+  <WebUI>http://[IP]:[PORT:7317]/</WebUI>
+  <Icon>https://raw.githubusercontent.com/herdrdev/herdr/master/assets/logo.png</Icon>
+  <ExtraParams>--hostname herdr</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="SSH port" Target="22" Default="2222" Mode="tcp" Description="SSH for the Herdr app / TUI (key-only, user herdr)" Type="Port" Display="always" Required="true" Mask="false">2222</Config>
+  <Config Name="Web UI port" Target="7317" Default="7317" Mode="tcp" Description="Ovis web UI. Token-protected; put it behind your reverse proxy + auth, never straight on the internet" Type="Port" Display="always" Required="false" Mask="false">7317</Config>
+  <Config Name="ttyd port" Target="7681" Default="7681" Mode="tcp" Description="Fallback browser shell (only when ENABLE_TTYD=true)" Type="Port" Display="always" Required="false" Mask="false">7681</Config>
+  <Config Name="Home" Target="/home/herdr" Default="/mnt/user/appdata/herdr/home" Mode="rw" Description="Home of user herdr: herdr, hc, bun, Ovis, agent logins, npm globals" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/herdr/home</Config>
+  <Config Name="Config" Target="/config" Default="/mnt/user/appdata/herdr/config" Mode="rw" Description="SSH host keys + web UI token" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/herdr/config</Config>
+  <Config Name="Projects" Target="/home/herdr/projects" Default="/mnt/user/appdata/herdr/projects" Mode="rw" Description="Your code. Point at one projects share only - never all of /mnt/user (agents have sudo)" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/herdr/projects</Config>
+  <Config Name="SSH public keys" Target="AUTHORIZED_KEYS" Default="" Mode="" Description="Public key(s) allowed to log in, separate several with ;  (added to home/.ssh/authorized_keys)" Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="Web UI token" Target="OVIS_TOKEN" Default="" Mode="" Description="Leave empty to auto-generate one into appdata/herdr/config/ovis_token" Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="ttyd login" Target="TTYD_CREDENTIAL" Default="" Mode="" Description="Basic auth for ttyd as user:password (strongly recommended)" Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="ENABLE_WEBUI" Target="ENABLE_WEBUI" Default="true" Mode="" Description="Run the Ovis web UI" Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="ENABLE_TTYD" Target="ENABLE_TTYD" Default="true" Mode="" Description="Run the ttyd browser shell" Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="ENABLE_SUDO" Target="ENABLE_SUDO" Default="true" Mode="" Description="Passwordless sudo for user herdr inside the container" Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="AUTO_UPDATE" Target="AUTO_UPDATE" Default="false" Mode="" Description="Update herdr, hc and Ovis on every container start" Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="User id of herdr (99 = nobody)" Type="Variable" Display="advanced" Required="true" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group id of herdr (100 = users)" Type="Variable" Display="advanced" Required="true" Mask="false">100</Config>
+  <Config Name="TZ" Target="TZ" Default="Europe/Amsterdam" Mode="" Description="Timezone" Type="Variable" Display="advanced" Required="false" Mask="false">Europe/Amsterdam</Config>
+</Container>

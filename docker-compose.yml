@@ -1,0 +1,16 @@
+services:
+  herdr:
+    image: ghcr.io/turkushan490/herdr-unraid:latest
+    build: .
+    container_name: herdr
+    hostname: herdr
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "2222:22"     # SSH for Herdr app / TUI
+      - "7317:7317"   # Ovis web UI (token + reverse proxy auth!)
+      - "7681:7681"   # ttyd fallback (optional)
+    volumes:
+      - /mnt/user/appdata/herdr/home:/home/herdr
+      - /mnt/user/appdata/herdr/config:/config
+      - /mnt/user/appdata/herdr/projects:/home/herdr/projects
