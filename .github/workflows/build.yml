@@ -49,17 +49,17 @@ jobs:
 
       - name: Smoke test (first start installs herdr, hc, bun, Ovis)
         run: |
-          docker run -d --name t -e ENABLE_TTYD=true -e TTYD_CREDENTIAL=t:t herdr-unraid:test
+          docker run -d --name smoke -e ENABLE_TTYD=true -e TTYD_CREDENTIAL=t:t herdr-unraid:test
           for i in $(seq 1 60); do
-            s=$(docker inspect -f '{{.State.Health.Status}}' t)
+            s=$(docker inspect -f '{{.State.Health.Status}}' smoke)
             echo "health: $s"; [ "$s" = healthy ] && break
-            [ "$(docker inspect -f '{{.State.Running}}' t)" = true ] || break
+            [ "$(docker inspect -f '{{.State.Running}}' smoke)" = true ] || break
             sleep 10
           done
-          docker logs t | tail -80
-          docker exec -u herdr t bash -lc 'herdr --version && hc --version && hc ls'
-          docker exec t sshd -T | grep -E '^(passwordauthentication|permitrootlogin|compression) '
-          test "$(docker inspect -f '{{.State.Health.Status}}' t)" = healthy
+          docker logs smoke | tail -80
+          docker exec -u herdr smoke bash -lc 'herdr --version && hc --version && hc ls'
+          docker exec smoke sshd -T | grep -E '^(passwordauthentication|permitrootlogin|compression) '
+          test "$(docker inspect -f '{{.State.Health.Status}}' smoke)" = healthy
 
       - name: Push
         if: github.event_name != 'pull_request'
