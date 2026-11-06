@@ -8,6 +8,6 @@ export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export LANG="${LANG:-C.UTF-8}"
 export TERM="${TERM:-xterm-256color}"
 export SHELL=/bin/bash
-cd "$HOME"
+cd "$HOME" || exit 1
 
-OVIS_DIR="$HOME/.local/share/ovis/app"
+export OVIS_DIR="$HOME/.local/share/ovis/app"

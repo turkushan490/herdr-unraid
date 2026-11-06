@@ -5,10 +5,10 @@ set -euo pipefail
 log() { echo "[entrypoint] $*"; }
 
 bool() { case "${1,,}" in 1|true|yes|on) echo true ;; *) echo false ;; esac; }
-export ENABLE_WEBUI="$(bool "${ENABLE_WEBUI:-true}")"
-export ENABLE_TTYD="$(bool "${ENABLE_TTYD:-true}")"
-export ENABLE_SUDO="$(bool "${ENABLE_SUDO:-true}")"
-export AUTO_UPDATE="$(bool "${AUTO_UPDATE:-false}")"
+ENABLE_WEBUI="$(bool "${ENABLE_WEBUI:-true}")"; export ENABLE_WEBUI
+ENABLE_TTYD="$(bool "${ENABLE_TTYD:-true}")"; export ENABLE_TTYD
+ENABLE_SUDO="$(bool "${ENABLE_SUDO:-true}")"; export ENABLE_SUDO
+AUTO_UPDATE="$(bool "${AUTO_UPDATE:-false}")"; export AUTO_UPDATE
 
 PUID="${PUID:-99}"
 PGID="${PGID:-100}"
