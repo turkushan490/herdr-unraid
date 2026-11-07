@@ -152,22 +152,22 @@ If the herdr version on your PC differs, interactive attach offers to install a 
 | 2 | Image: Ubuntu 24.04, sshd, supervisord, tini, ttyd, Node 22 | ✅ |
 | 3 | Entrypoint: PUID/PGID user, keys, host keys, token, first-run install | ✅ |
 | 4 | CI: shellcheck, build, smoke test (healthy + herdr/hc work + sshd settings), push to GHCR | ✅ |
-| 5 | Deploy on Unraid via template, check pull from private GHCR | ⏳ |
-| 6 | Acceptance checklist below on the real server | ⏳ |
+| 5 | Deploy on Unraid via template (image built on the server) | ✅ |
+| 6 | Acceptance checklist below on the real server | 🔄 |
 | 7 | Reverse proxy host + forward auth for the web UI | ⏳ |
 | 8 | Own GUI, only if Ovis falls short (§9) | later |
 
 ## 8. Acceptance checklist
 
-- [ ] Container starts healthy from empty appdata
-- [ ] `ssh unraid-herdr` works with the key; password and root login refused
+- [x] Container starts healthy from empty appdata
+- [x] `ssh unraid-herdr` works with the key; password and root login refused
 - [ ] `herdr --version` / `hc ls` work inside, and still work after an image update
 - [ ] Herdr client on the PC connects and shows the container's agents
 - [ ] Ovis on :7317 asks for the token, shows the live terminal, can send input to an agent
 - [ ] Web UI not reachable from outside without the auth portal
-- [ ] ttyd on :7681 asks for the login and gives a shell
+- [x] ttyd on :7681 asks for the login and gives a shell
 - [ ] Agents keep running after closing all clients and after `hc update`
-- [ ] Files in `projects` are owned by 99:100 on the array
+- [x] Files in `projects` are owned by 99:100 on the array
 
 ## 9. Later: own GUI (only if needed)
 
