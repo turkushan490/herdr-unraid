@@ -49,7 +49,10 @@ jobs:
 
       - name: Smoke test (first start installs herdr, hc, bun, Ovis)
         run: |
-          docker run -d --name smoke -e ENABLE_TTYD=true -e TTYD_CREDENTIAL=t:t herdr-unraid:test
+          ssh-keygen -q -t ed25519 -N '' -f smoke_key
+          docker run -d --name smoke -p 2222:22 -p 7317:7317 -p 7681:7681 \
+            -e ENABLE_TTYD=true -e TTYD_CREDENTIAL=t:t \
+            -e AUTHORIZED_KEYS="$(cat smoke_key.pub)" herdr-unraid:test
           for i in $(seq 1 60); do
             s=$(docker inspect -f '{{.State.Health.Status}}' smoke)
             echo "health: $s"; [ "$s" = healthy ] && break
@@ -60,6 +63,13 @@ jobs:
           docker exec -u herdr smoke bash -lc 'herdr --version && hc --version && hc ls'
           docker exec smoke sshd -T | grep -E '^(passwordauthentication|permitrootlogin|compression) '
           test "$(docker inspect -f '{{.State.Health.Status}}' smoke)" = healthy
+          # real SSH session as herdr (catches PAM session failures)
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=no -i smoke_key -p 2222 herdr@127.0.0.1 \
+            'herdr --version && hc ls && pgrep -f "herdr server"'
+          # auth gates
+          curl -s http://127.0.0.1:7317/api/health | grep -q '"required":true'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:7681/)" = 401
+          test "$(curl -s -o /dev/null -w '%{http_code}' -u t:t http://127.0.0.1:7681/)" = 200
 
       - name: Push
         if: github.event_name != 'pull_request'

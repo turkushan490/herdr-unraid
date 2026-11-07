@@ -25,6 +25,9 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/* \
  # Ubuntu images ship user "ubuntu" (1000) - drop it so PUID 1000 is free
  && (userdel -r ubuntu 2>/dev/null || true) \
+ # pam_loginuid can't write loginuid inside Docker -> every SSH session would
+ # fail with "pam_open_session(): Cannot make/remove an entry"; also drop MOTD
+ && sed -i -E 's/^session\s+required\s+pam_loginuid.so/session optional pam_loginuid.so/; s/^(session\s+optional\s+pam_motd.so.*)/# \1/' /etc/pam.d/sshd \
  && mkdir -p /run/sshd /config /var/log/herdr
 
 COPY rootfs/ /

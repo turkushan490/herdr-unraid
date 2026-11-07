@@ -61,7 +61,9 @@ herdr-unraid/
 │   ├── run-webui.sh      # Ovis
 │   ├── run-ttyd.sh       # ttyd (+ basic auth)
 │   └── healthcheck.sh
-├── unraid/herdr.xml      # Unraid Docker template
+├── unraid/
+│   ├── herdr.xml             # Unraid Docker template
+│   └── build-on-server.sh    # build on Unraid + recreate container
 └── .github/workflows/build.yml  # builds + smoke-tests + pushes to GHCR
 ```
 
@@ -106,7 +108,15 @@ docker logs -f herdr
 
 The first start takes a few minutes (downloads + `bun install`). The healthcheck allows 10 min.
 
-> The image on GHCR is private while the repo is private, so Unraid needs a `docker login ghcr.io` (read:packages token) to pull it. Alternatives: build it on the server (`docker build -t ghcr.io/turkushan490/herdr-unraid:latest .`) or make the package public.
+**Build on the server (what Tower uses):** the GHCR image is private, so instead of pulling, the image is built on the server itself. `rebuild_container` doesn't pull, so the template works with the local image.
+
+From the PC, in this repo:
+```bash
+git archive --format=tar.gz -o /tmp/herdr-src.tgz HEAD
+scp /tmp/herdr-src.tgz root@<unraid-ip>:/tmp/
+ssh root@<unraid-ip> 'rm -rf /mnt/user/appdata/herdr/src && mkdir -p /mnt/user/appdata/herdr/src && tar xzf /tmp/herdr-src.tgz -C /mnt/user/appdata/herdr/src && bash /mnt/user/appdata/herdr/src/unraid/build-on-server.sh'
+```
+`build-on-server.sh` builds the image, recreates the container from `templates-user/my-herdr.xml` and removes the old image. herdr, hc and Ovis themselves update inside the container (`herdr update`, `hc update`, or `AUTO_UPDATE=true`), so a rebuild is only needed when this repo changes.
 
 ## 6. Usage
 
