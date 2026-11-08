@@ -7,7 +7,11 @@
   <MyIP/>
   <Shell>bash</Shell>
   <Privileged>false</Privileged>
-  <Support>https://github.com/turkushan490/herdr-unraid</Support>
+  <Support>https://github.com/turkushan490/herdr-unraid/issues</Support>
+  <TemplateURL>https://raw.githubusercontent.com/turkushan490/herdr-unraid/main/unraid/herdr.xml</TemplateURL>
+  <Maintainer>
+    <WebPage>https://github.com/turkushan490</WebPage>
+  </Maintainer>
   <Project>https://herdr.dev/</Project>
   <Overview>Herdr / herdr-core coding-agent runtime with SSH access for the Herdr app and TUI, the Ovis web UI and an optional ttyd browser shell. Everything persists in appdata.</Overview>
   <Category>Tools: Productivity:</Category>

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<Maintainer>
+  <Profile>Unraid templates by turkushan490. herdr-unraid runs Herdr / herdr-core (the terminal runtime for coding agents) with SSH access for the Herdr app and TUI, the Ovis web UI and an optional ttyd browser shell. Questions and bug reports go to the GitHub issues of each repository.</Profile>
+  <Icon>https://avatars.githubusercontent.com/u/1742126</Icon>
+  <WebPage>https://github.com/turkushan490</WebPage>
+</Maintainer>

@@ -108,7 +108,7 @@ docker logs -f herdr
 
 The first start takes a few minutes (downloads + `bun install`). The healthcheck allows 10 min.
 
-**Build on the server (what Tower uses):** the GHCR image is private, so instead of pulling, the image is built on the server itself. `rebuild_container` doesn't pull, so the template works with the local image.
+**Build on the server (optional):** instead of pulling from GHCR you can build the image on the server itself. `rebuild_container` doesn't pull, so the template works with the local image.
 
 From the PC, in this repo:
 ```bash
@@ -144,52 +144,11 @@ If the herdr version on your PC differs, interactive attach offers to install a 
 
 **SSH tunnel instead of publishing 7317:** `ssh -L 7317:127.0.0.1:7317 unraid-herdr`, then open `http://localhost:7317`.
 
-## 7. Build plan
-
-| # | Step | Status |
-|---|---|---|
-| 1 | Fix the spec (real install commands, Ovis rename, `herdr server`, token instead of socat) | ✅ |
-| 2 | Image: Ubuntu 24.04, sshd, supervisord, tini, ttyd, Node 22 | ✅ |
-| 3 | Entrypoint: PUID/PGID user, keys, host keys, token, first-run install | ✅ |
-| 4 | CI: shellcheck, build, smoke test (healthy + herdr/hc work + sshd settings), push to GHCR | ✅ |
-| 5 | Deploy on Unraid via template (image built on the server) | ✅ |
-| 6 | Acceptance checklist below on the real server | 🔄 |
-| 7 | Reverse proxy host + forward auth for the web UI | ⏳ |
-| 8 | Own GUI, only if Ovis falls short (§9) | later |
-
-## 8. Acceptance checklist
-
-- [x] Container starts healthy from empty appdata
-- [x] `ssh unraid-herdr` works with the key; password and root login refused
-- [ ] `herdr --version` / `hc ls` work inside, and still work after an image update
-- [ ] Herdr client on the PC connects and shows the container's agents
-- [ ] Ovis on :7317 asks for the token, shows the live terminal, can send input to an agent
-- [ ] Web UI not reachable from outside without the auth portal
-- [x] ttyd on :7681 asks for the login and gives a shell
-- [ ] Agents keep running after closing all clients and after `hc update`
-- [x] Files in `projects` are owned by 99:100 on the array
-
-## 9. Later: own GUI (only if needed)
-
-If Ovis doesn't fit, build a small one:
-- Backend: herdr-core API (`hc schema` → OpenRPC, with streams/events) or herdr's socket API
-- Frontend: agent list with status (working / done / needs you), xterm.js terminal per agent, "send message", start-agent button
-- Same container, same port, same auth
-
-## 10. Security notes
+## 7. Security notes
 
 - Agents have sudo inside the container → mount only the projects share, never all of `/mnt/user`. Set `ENABLE_SUDO=false` if you don't need it.
 - Don't expose 2222 / 7317 / 7681 to the internet. Web via reverse proxy + auth only; SSH via LAN, Tailscale or WireGuard.
 - Agent logins / API keys and the web token live in appdata → back it up, keep it private.
-
-## Changes compared to the first spec
-
-- `herdr-web-ui` is now **Ovis** (`devswha/ovis`). It runs from a git checkout with `bun run start`; settings are `HOST`, `PORT`, `OVIS_TOKEN`, `HERDR_SOCKET`, `OVIS_STATE_DIR`. `HERDR_WEB_NO_OPEN` is now `OVIS_NO_OPEN`. It doesn't need Node.
-- No socat proxy: Ovis listens on `0.0.0.0` inside the container and is protected by its token.
-- herdr install = `curl -fsSL https://herdr.dev/install.sh | sh` → `~/.local/bin/herdr`. Headless server = `herdr server`.
-- herdr-core installs to `~/.local/bin/herdr-core` with an `hc` symlink; its daemon starts on first use.
-- ttyd gets basic auth (`TTYD_CREDENTIAL`); tini is PID 1 so daemonized children get reaped.
-- Default projects path is inside appdata; point it at your projects share in the template.
 
 ## Sources
 - https://herdr.dev/ · https://herdr.dev/core/ · https://herdr.dev/docs/connecting-machines/ · https://herdr.dev/docs/persistence-remote/
